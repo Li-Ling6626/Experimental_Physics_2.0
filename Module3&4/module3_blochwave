@@ -1,0 +1,48 @@
+#引入模組
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 建立二維網格
+x = np.linspace(-3, 3, 200)
+y = np.linspace(-3, 3, 200)
+X, Y = np.meshgrid(x, y)
+
+# 計算半徑 r
+R = np.sqrt(X**2 + Y**2)
+
+# 避免除以零發生錯誤
+R_safe = np.where(R == 0, 1e-10, R) #如果半徑r=0，計算U(r)=-1/r會發生除以零的錯誤
+
+# 計算位能 U(r) = -1/r
+U = -1 / R_safe
+
+# 限制位能範圍
+U = np.clip(U, -5, 0)
+
+# 建立畫布與 3D 座標軸
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# 繪製 3D 曲面
+# cmap='viridis' 提供良好的數值深度視覺化，alpha=0.7 讓曲面稍微透明
+surf = ax.plot_surface(X, Y, U, cmap='viridis', alpha=0.7, edgecolor='none')
+
+# 標出 r = a0 的位置
+# 這在 3D 圖中會是一個半徑為 1、高度為 -1 的圓
+theta = np.linspace(0, 2 * np.pi, 100)
+x_circle = np.cos(theta)
+y_circle = np.sin(theta)
+z_circle = np.full_like(theta, -1)
+
+# 畫出標示圈
+ax.plot(x_circle, y_circle, z_circle, color='red', linewidth=3, label=r'$r = a_0, U(a_0)$')
+
+# 加入標籤與設定
+ax.set_xlabel(r'$x \ (a_0)$')
+ax.set_ylabel(r'$y \ (a_0)$')
+ax.set_zlabel(r'$U(r)$')
+ax.set_title(r'3D Plot of Coulomb Potential $U(r)$')
+ax.legend()
+
+#顯示圖形
+plt.show()
