@@ -1,0 +1,31 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# 參數
+# ======================
+E0 = 0
+A = 1
+a = 1
+
+# ======================
+# 很多 k 點（關鍵）
+# ======================
+k = np.linspace(-np.pi/a, np.pi/a, 10000)
+
+# 色散關係
+E = E0 - A * np.cos(k * a)
+
+# ======================
+# 畫 DOS（histogram）
+# ======================
+plt.figure()
+
+plt.hist(E, bins=80, density=True, alpha=0.7)
+
+plt.xlabel("Energy E")
+plt.ylabel("Density of States (DOS)")
+plt.title("DOS from k-sampling of E(k) = E0 - A cos(ka)")
+plt.grid(True)
+
+plt.show()

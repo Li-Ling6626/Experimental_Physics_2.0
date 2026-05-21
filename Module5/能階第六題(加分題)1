@@ -1,0 +1,33 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ======================
+# 參數設定
+# ======================
+E0 = 0       # 能帶中心
+A = 1        # 能帶寬度參數
+a = 1        # 晶格常數
+
+# ======================
+# k 空間
+# ======================
+k = np.linspace(-np.pi/a, np.pi/a, 400)
+
+# ======================
+# 色散關係
+# ======================
+E = E0 - A * np.cos(k * a)
+
+# ======================
+# 畫圖
+# ======================
+plt.figure()
+
+plt.plot(k, E, linewidth=2)
+
+plt.xlabel("k")
+plt.ylabel("E(k)")
+plt.title("Cosine Band Dispersion: E(k) = E0 - A cos(ka)")
+plt.grid(True)
+
+plt.show()

@@ -1,0 +1,61 @@
+# 引入模組
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 定義兩原子間距 a
+a = 2.5 
+
+# 設定網格範圍
+x = np.linspace(-4, 4 + a, 400)
+y = np.linspace(-5, 5, 400)
+X, Y = np.meshgrid(x, y)   # 生成二維網格
+
+# 計算到兩個原子核的距離
+R1 = np.sqrt(X**2 + Y**2)
+R2 = np.sqrt((X - a)**2 + Y**2)
+
+# 1. s-s 疊加
+psi_s1 = np.exp(-R1)   # s軌域的波函數(第一個原子)
+psi_s2 = np.exp(-R2)   # s軌域的波函數(第二個原子)
+psi_ss = psi_s1 + psi_s2   # 兩個波函數相加
+prob_ss = psi_ss**2    # 機率密度為波函數的平方
+
+# 2. px-px 疊加
+psi_px1 = X * np.exp(-R1 / 2)
+psi_px2 = (X - a) * np.exp(-R2 / 2)
+psi_pxpx = psi_px1 + psi_px2  # px1為正，px2為負，為了形成成鍵軌域中間的波函數符號必須相同，用相減表示成鍵狀態
+prob_pxpx = psi_pxpx**2
+
+# 3. py-py 疊加
+psi_py1 = Y * np.exp(-R1 / 2)
+psi_py2 = Y * np.exp(-R2 / 2)
+psi_pypy = psi_py1 + psi_py2  # 兩者符號相同，直接將兩波函數相加
+prob_pypy = psi_pypy**2
+
+# 繪製圖形
+fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+# 繪製 s-s
+axes[0].contourf(X, Y, prob_ss, levels=50, cmap='Blues')   #使用contourf函數來表示機率密度分布
+axes[0].scatter([0, a], [0, 0], color='blue', zorder=5, label='Atoms') # 標示原子位置
+axes[0].set_title('s-s Overlap ($\sigma$ bond)', fontsize=14)
+axes[0].set_aspect('equal')
+axes[0].axis('off')
+
+# 繪製 px-px
+axes[1].contourf(X, Y, prob_pxpx, levels=50, cmap='Reds')
+axes[1].scatter([0, a], [0, 0], color='red', zorder=5)
+axes[1].set_title('$p_x-p_x$ Overlap ($\sigma$ bond)', fontsize=14)
+axes[1].set_aspect('equal')
+axes[1].axis('off')
+
+# 繪製 py-py
+axes[2].contourf(X, Y, prob_pypy, levels=50, cmap='Greens')
+axes[2].scatter([0, a], [0, 0], color='green', zorder=5)
+axes[2].set_title('$p_y-p_y$ Overlap ($\pi$ bond)', fontsize=14)
+axes[2].set_aspect('equal')
+axes[2].axis('off')
+
+# 顯示圖表
+plt.tight_layout()
+plt.savefig('orbital_overlap.png')

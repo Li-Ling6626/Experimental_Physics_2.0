@@ -1,0 +1,47 @@
+# 引入模組
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 設定網格範圍
+x = np.linspace(-5, 5, 400)
+y = np.linspace(-5, 5, 400)
+X, Y = np.meshgrid(x, y)  # 生成二維網格
+R = np.sqrt(X**2 + Y**2)  # 計算每個網格點到原點的距離(半徑R)
+
+# 定義波函數模型
+# s 軌域：球對稱
+psi_s = np.exp(-R)  # 簡化的s軌域波函數模型
+prob_s = psi_s**2   # 機率密度為波函數的平方
+
+# px 軌域：與 x 成正比
+psi_px = X * np.exp(-R / 2)   # 簡化的px軌域波函數模型
+prob_px = psi_px**2
+
+# py 軌域：與 y 成正比
+psi_py = Y * np.exp(-R / 2)   # 簡化的py軌域波函數模型
+prob_py = psi_py**2
+
+# 建立圖表
+fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+
+# 繪製 s 軌域
+axes[0].contourf(X, Y, prob_s, levels=50, cmap='Blues')  #使用contourf函數來表示機率密度分布
+axes[0].set_title('$s$ Orbital Probability Density', fontsize=14)
+axes[0].set_aspect('equal')
+axes[0].axis('off')
+
+# 繪製 px 軌域
+axes[1].contourf(X, Y, prob_px, levels=50, cmap='Reds')
+axes[1].set_title('$p_x$ Orbital Probability Density', fontsize=14)
+axes[1].set_aspect('equal')
+axes[1].axis('off')
+
+# 繪製 py 軌域
+axes[2].contourf(X, Y, prob_py, levels=50, cmap='Greens')
+axes[2].set_title('$p_y$ Orbital Probability Density', fontsize=14)
+axes[2].set_aspect('equal')
+axes[2].axis('off')
+
+# 顯示圖表
+plt.tight_layout()
+plt.show()

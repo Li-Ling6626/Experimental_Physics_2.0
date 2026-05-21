@@ -1,0 +1,51 @@
+# 引入模組
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import eigh
+
+# 物理參數設定
+N = 1000          # 空間切分數目
+x_max = 10.0      # 空間範圍為 [-x_max, x_max]
+x = np.linspace(-x_max, x_max, N)
+dx = x[1] - x[0]  # 空間點之間的距離
+
+# 設定單井位能 V(x)
+V0 = 5.0   # 高斯位能的深度
+sigma = 1.0   # 高斯函數的寬度
+V = -V0 * np.exp(-x**2 / sigma**2)
+
+# 建構哈密頓矩陣 H = T + V
+# 利用有限差分法近似二次微分 d^2/dx^2
+diag = np.ones(N) * (1.0 / dx**2)           # 主對角線元素
+off_diag = np.ones(N-1) * (-0.5 / dx**2)    # 次對角線元素
+T = np.diag(diag) + np.diag(off_diag, k=1) + np.diag(off_diag, k=-1)
+
+# 將位能轉為對角矩陣並和動能矩陣相加
+H = T + np.diag(V)
+
+# 求解最低本徵態與對應能量
+eigenvalues, eigenvectors = eigh(H)   # eigh函數來求解哈密頓矩陣H的本徵值和本徵向量
+
+E0 = eigenvalues[0]        # 本徵值，為最低能量
+psi0 = eigenvectors[:, 0]  # 本徵向量，為最低能態波函數
+
+# 波函數歸一化
+psi0 = psi0 / np.sqrt(np.sum(np.abs(psi0)**2 * dx))
+
+# 為了方便將波函數與位能畫在同一張圖上，將波函數的振幅適度放大，並平移至對應的能階 E0 上
+psi0_plot = psi0 * 2 + E0  
+
+# 畫圖
+plt.figure(figsize=(8, 6))
+plt.plot(x, V, 'k-', lw=2, label=r'Potential $V(x) = -V_0 e^{-x^2/\sigma^2}$')
+plt.axhline(E0, color='r', linestyle='--', label=f'Ground Energy $E_0 = {E0:.2f}$')
+plt.plot(x, psi0_plot, 'b-', lw=2, label=r'Ground State Wavefunction $\psi_0(x)$')
+
+plt.title('Single Atom Gaussian Potential Well and Ground State', fontsize=14)
+plt.xlabel('Position $x$', fontsize=12)
+plt.ylabel('Energy / Wavefunction Amplitude', fontsize=12)
+plt.xlim(-5, 5)
+plt.ylim(min(V) - 1, max(V) + 1)
+plt.legend(loc='lower right')
+plt.grid(alpha=0.3)
+plt.show()
